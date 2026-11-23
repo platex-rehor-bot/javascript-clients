@@ -51,26 +51,18 @@ export type {{operationIdCamelCase}}{{enumName}} = typeof {{operationIdCamelCase
 {{#operation}}
 export type {{operationIdCamelCase}}ReturnType = {{{returnType}}}{{^returnType}}void{{/returnType}};
 
-const is{{operationIdCamelCase}}ObjectParams = (params: [{{operationIdCamelCase}}Params] | unknown[]): params is [{{operationIdCamelCase}}Params] => {
-  const l = params.length === 1
-  if(l && typeof params[0] === 'object' && !Array.isArray(params[0])) {
-    return true{{#allParams}}{{#required}} && Object.prototype.hasOwnProperty.call(params[0], '{{paramName}}'){{/required}}{{/allParams}}
-  }
-  return false
-}
 /**
 * {{&notes}}
 {{#summary}}
 * @summary {{&summary}}
 {{/summary}}
 * @param {{=<% %>=}}{<%operationIdCamelCase%>Params}<%={{ }}=%> config with all available params.
-* @param {*} [options] Override http request option.{{#isDeprecated}}
+* @param {*} [config.options] Override http request options.{{#isDeprecated}}
 * @deprecated{{/isDeprecated}}
 * @throws {RequiredError}
 */
-export const {{nickname}}ParamCreator = async (sendRequest: BaseAPI["sendRequest"], ...config: ([{{operationIdCamelCase}}Params] | [{{#allParams}}{{#isEnum}}{{{datatypeWithEnum}}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{#isNullable}} | null{{/isNullable}}{{/isEnum}}, {{/allParams}}AxiosRequestConfig])) => {
-    const params = is{{operationIdCamelCase}}ObjectParams(config) ? config[0] : [{{#allParams}}'{{paramName}}', {{/allParams}}'options'].reduce((acc, curr, index) => ({ ...acc, [curr]: config[index] }), {}) as {{operationIdCamelCase}}Params;
-    const { {{#allParams}}{{paramName}}, {{/allParams}}options = {} } = params;
+export const {{nickname}}ParamCreator = async (sendRequest: BaseAPI["sendRequest"], config: {{operationIdCamelCase}}Params) => {
+    const { {{#allParams}}{{paramName}}, {{/allParams}}options = {} } = config;
 {{#allParams}}
 {{/allParams}}
     const localVarPath = `{{{path}}}`{{#pathParams}}

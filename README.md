@@ -141,6 +141,18 @@ From the root javascript-clients folder:
 
 As the default, we use `typescript-axios` to generate a client based on their OpenAPI spec. In addition, we have a custom generator available for use built with module federation in mind which allows for treeshaking by webpack. This will create a new folder for each endpoint allowing consumers to import only the endpoints they are going to use without the need of importing the entire API. This generator should be a replacement for the regular `typescript-axios` generator. See below for an example script to use the new generator:
 
+Generated endpoint methods accept a single parameters object. Pass Axios overrides
+as its `options` property, not as a separate argument. Even endpoints without
+parameters take an object:
+
+```ts
+await client.getGroup({ uuid: groupId, options: { headers: { 'X-Example': 'value' } } });
+await client.listGroups({});
+```
+
+Migrate positional calls such as `client.getGroup(groupId, options)` to the
+object form above. The generated `<Operation>Params` types describe the keys.
+
 ```JSON
 {
   "name": "@redhat-cloud-services/some-client-name",
@@ -172,4 +184,3 @@ Generally, the pattern is for a client to have a `tests/integration` folder with
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, dependency graph, data flows |
 | [docs/testing-guidelines.md](docs/testing-guidelines.md) | Test types, integration test patterns |
 | [docs/api-contracts-guidelines.md](docs/api-contracts-guidelines.md) | OpenAPI spec management, code generation pipeline |
-

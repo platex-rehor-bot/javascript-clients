@@ -40,6 +40,22 @@ const axiosConfig = {
 const client = RbacClient(BASE_PATH, axiosConfig);
 
 describe('RBAC API (v1)', () => {
+  test('accepts object parameters with request options', async () => {
+    const request = jest.spyOn(axiosConfig.axios, 'request');
+    try {
+      const response = await client.getRoleAccess({
+        uuid: generateTestData.uuid(),
+        options: { headers: { 'X-Test-Object-Params': 'yes' } },
+      });
+      expect(response.status).toEqual(200);
+      expect(request).toHaveBeenCalledWith(expect.objectContaining({
+        headers: expect.objectContaining({ 'X-Test-Object-Params': 'yes' }),
+      }));
+    } finally {
+      request.mockRestore();
+    }
+  });
+
   test('access', async () => {
     const getRoleAccessParams = { uuid: generateTestData.uuid() };
     const roleAccessResp = await client.getRoleAccess(getRoleAccessParams);
